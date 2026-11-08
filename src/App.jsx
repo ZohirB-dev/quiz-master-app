@@ -30,7 +30,7 @@ export default function App() {
 
   return (
     <main className="mx-auto max-w-xl px-4 py-10 text-slate-900 dark:text-slate-100">
-      <h1 className="mb-6 text-2xl font-bold">Quiz Master</h1>
+      <h1 className="text-black mb-6 text-2xl font-bold">Quiz Master</h1>
 
       {phase === "setup" && <Setup onStart={start} error={error} />}
       {phase === "play" && <Quiz questions={questions} onFinish={finish} />}
