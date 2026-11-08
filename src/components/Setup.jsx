@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 
 const field =
   "w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 dark:border-slate-600 dark:bg-slate-900";
+const btn = "w-full rounded-lg px-4 py-2.5 font-semibold disabled:opacity-50";
 
 export default function Setup({ onStart, error }) {
   const [topics, setTopics] = useState([]);
@@ -28,12 +29,9 @@ export default function Setup({ onStart, error }) {
       <label className="block">
         <span className="mb-1 block font-semibold">Topic</span>
         <select className={field} value={topic} onChange={(e) => setTopic(e.target.value)}>
-          {topics.map((t) => (
-            <option key={t}>{t}</option>
-          ))}
+          {topics.map((t) => <option key={t}>{t}</option>)}
         </select>
       </label>
-
       <label className="block">
         <span className="mb-1 block font-semibold">Difficulty</span>
         <select className={field} value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
@@ -43,22 +41,20 @@ export default function Setup({ onStart, error }) {
           <option value="hard">Hard</option>
         </select>
       </label>
-
       <label className="block">
         <span className="mb-1 block font-semibold">Questions</span>
         <select className={field} value={count} onChange={(e) => setCount(+e.target.value)}>
-          {[5, 10, 20].map((n) => (
-            <option key={n}>{n}</option>
-          ))}
+          {[5, 10, 20].map((n) => <option key={n}>{n}</option>)}
         </select>
       </label>
 
-      <button
-        disabled={!topic}
-        onClick={() => onStart({ topic, difficulty, count })}
-        className="w-full rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white hover:bg-blue-700 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-      >
+      <button disabled={!topic} onClick={() => onStart({ topic, difficulty, count, mode: "quiz" })}
+        className={`${btn} bg-blue-600 text-white hover:bg-blue-700`}>
         Start quiz
+      </button>
+      <button disabled={!topic} onClick={() => onStart({ topic, difficulty, count, mode: "retry" })}
+        className={`${btn} border border-slate-300 hover:border-blue-600 dark:border-slate-600`}>
+        Retry my mistakes
       </button>
 
       {(error || loadError) && <p className="text-red-600">{error || loadError}</p>}

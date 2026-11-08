@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function Quiz({ questions, onFinish }) {
   const [i, setI] = useState(0);
   const [score, setScore] = useState(0);
   const [picked, setPicked] = useState(null);
+  const answers = useRef([]);
 
   const q = questions[i];
   const answered = picked !== null;
@@ -12,11 +13,13 @@ export default function Quiz({ questions, onFinish }) {
   function pick(n) {
     if (answered) return;
     setPicked(n);
-    if (n === q.answer) setScore((s) => s + 1);
+    const correct = n === q.answer;
+    answers.current.push({ question_id: q.id, chosen: n, correct });
+    if (correct) setScore((s) => s + 1);
   }
 
   function next() {
-    if (last) return onFinish(score);
+    if (last) return onFinish(score, answers.current);
     setI(i + 1);
     setPicked(null);
   }
@@ -34,31 +37,19 @@ export default function Quiz({ questions, onFinish }) {
         Question {i + 1} of {questions.length}: {q.topic}, {q.difficulty}
       </p>
       <p className="mb-4 text-lg font-semibold">{q.question}</p>
-
       <div className="space-y-2">
         {q.options.map((text, n) => (
-          <button
-            key={n}
-            onClick={() => pick(n)}
-            disabled={answered}
-            className={`w-full rounded-lg border px-3 py-2.5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${style(n)}`}
-          >
+          <button key={n} onClick={() => pick(n)} disabled={answered}
+            className={`w-full rounded-lg border px-3 py-2.5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${style(n)}`}>
             {text}
           </button>
         ))}
       </div>
-
       {answered && q.explanation && (
-        <p className="mt-4 border-l-4 border-blue-600 bg-slate-100 px-3 py-2 dark:bg-slate-900">
-          {q.explanation}
-        </p>
+        <p className="mt-4 border-l-4 border-blue-600 bg-slate-100 px-3 py-2 dark:bg-slate-900">{q.explanation}</p>
       )}
-
       {answered && (
-        <button
-          onClick={next}
-          className="mt-5 w-full rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-        >
+        <button onClick={next} className="mt-5 w-full rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white hover:bg-blue-700">
           {last ? "See results" : "Next question"}
         </button>
       )}
